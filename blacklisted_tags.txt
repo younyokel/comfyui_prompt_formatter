@@ -1,0 +1,2 @@
+tagme .*text .*_bubble onomatopoeia dialogue
+.*_(artwork) watermark signature 20\d\d
