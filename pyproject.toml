@@ -1,0 +1,14 @@
+[project]
+name = "prompt_formatter"
+description = "This is a custom node for ComfyUI that provides tools to clean, optimize, and format text prompts. It includes features like converting tags, aligning brackets, and applying weights to prompts."
+version = "1.0.0"
+license = {file = "LICENSE"}
+
+[project.urls]
+Repository = "https://github.com/younyokel/comfyui_prompt_formatter"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = ""
+DisplayName = "comfyui_prompt_formatter"
+Icon = ""
