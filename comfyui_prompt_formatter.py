@@ -351,26 +351,6 @@ def dedupe_tokens(prompt: str):
 def comma_before_bracket(prompt: str):
     return re.sub(r',\s*(<)', r' \1', prompt)
 
-def extra_networks_shift(prompt: str):
-    def match(m):
-        network, content = m.groups()
-        
-        sep_match = re.search(r'(\n|BREAK)', content)
-        
-        if sep_match:
-            sep_pos = sep_match.start()
-            activation = content[:sep_pos].strip().rstrip(',')
-            rest = content[sep_pos:]
-        else:
-            activation = content.strip().rstrip(',')
-            rest = ''
-        
-        if activation and ',' not in activation:
-            return f', {activation} {network}{rest}'
-        return f'{network}{content}'
-    
-    return re.sub(r'(<[^<>]+>)([^<]*)', match, prompt)
-
 def format_prompt(prompt):
     global previous_prompt
     previous_prompt = prompt # Save state before modifications
@@ -381,9 +361,6 @@ def format_prompt(prompt):
 
     # Remove duplicates
     prompt = dedupe_tokens(prompt)
-
-    # Move activation text to the left of network tags
-    prompt = extra_networks_shift(prompt)
 
     # Clean up whitespace for cool beans
     prompt = remove_whitespace_excessive(prompt)
