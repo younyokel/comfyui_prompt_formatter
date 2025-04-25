@@ -31,7 +31,7 @@ async function handlePromptRequest(action, text) {
 app.registerExtension({
     name: "prompt.formatter",
     nodeCreated(node) {
-        if (node.comfyClass == "CLIPTextEncodeFormatter") {
+        if (node.comfyClass === "CLIPTextEncodeFormatter" || node.comfyClass === "TextOnlyFormatter") {
             node.addWidget("button", "💫 Format Prompt", "", async () => {
                 const textWidget = findWidgetByName(node, "text");
                 const formattedPrompt = await handlePromptRequest("format_prompt", textWidget.value);
