@@ -2,7 +2,7 @@ from comfy.comfy_types import IO, ComfyNodeABC, InputTypeDict
 from server import PromptServer
 from aiohttp import web
 
-from .prompt_formatter import format_prompt, convert_tags, previous_prompt
+from .prompt_formatter import format_prompt, convert_tags
 
 # Route to handle text requests
 @PromptServer.instance.routes.post("/prompt_formatter/format_prompt")
@@ -31,20 +31,6 @@ async def route_convert_tags(request):
         result = {
             "success": True,
             "formatted_prompt": converted_prompt
-        }
-    
-    return web.json_response(result)
-
-@PromptServer.instance.routes.post("/prompt_formatter/undo_convert")
-async def route_undo_convert(request):
-    json_data = await request.json()
-    result = {"success": False}
-    
-    if (text := json_data.get("text")) is not None:
-        # Perform the action undoing
-        result = {
-            "success": True,
-            "formatted_prompt": previous_prompt if previous_prompt else text
         }
     
     return web.json_response(result)

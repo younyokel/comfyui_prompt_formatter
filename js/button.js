@@ -32,22 +32,25 @@ app.registerExtension({
     name: "prompt.formatter",
     nodeCreated(node) {
         if (node.comfyClass === "CLIPTextEncodeFormatter" || node.comfyClass === "TextOnlyFormatter") {
+            node.previousTextValue = findWidgetByName(node, "text")?.value || ""; 
+
             node.addWidget("button", "💫 Format Prompt", "", async () => {
                 const textWidget = findWidgetByName(node, "text");
+                node.previousTextValue = textWidget.value; 
                 const formattedPrompt = await handlePromptRequest("format_prompt", textWidget.value);
                 textWidget.value = formattedPrompt;
             });
             
             node.addWidget("button", "✒️ Convert Tags", "", async () => {
                 const textWidget = findWidgetByName(node, "text");
+                node.previousTextValue = textWidget.value; 
                 const convertedPrompt = await handlePromptRequest("convert_tags", textWidget.value);
                 textWidget.value = convertedPrompt;
             });
             
             node.addWidget("button", "⏪ Undo Last Change", "", async () => {
                 const textWidget = findWidgetByName(node, "text");
-                const undidPrompt = await handlePromptRequest("undo_convert", textWidget.value);
-                textWidget.value = undidPrompt;
+                textWidget.value = node.previousTextValue; 
             });
         }
     },

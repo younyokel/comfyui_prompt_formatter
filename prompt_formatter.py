@@ -3,9 +3,6 @@ import unicodedata
 
 from .config import BRACKET2WEIGHT, CONV_SPACE_UNDERSCORE, BLACKLISTED_TAGS
 
-# UI prompt storage
-previous_prompt = ""
-
 # Bracket handling
 brackets_opening = set("([{")
 brackets_closing = set(")]}")
@@ -308,9 +305,6 @@ def comma_before_bracket(prompt: str):
     return re.sub(r',\s*(<)', r' \1', prompt)
 
 def format_prompt(prompt):
-    global previous_prompt
-    previous_prompt = prompt # Save state before modifications
-
     # Clean up the string
     prompt = normalize_characters(prompt)
     prompt = remove_mismatched_brackets(prompt)
@@ -332,9 +326,6 @@ def format_prompt(prompt):
     return prompt
 
 def convert_tags(prompt):
-    global previous_prompt, BLACKLISTED_TAGS
-    previous_prompt = prompt # Save state before modifications
-
     remove_parens = str.maketrans({"(": "", ")": ""})
     output_lines = []
 
