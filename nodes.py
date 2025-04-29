@@ -88,6 +88,7 @@ class TextAppendFormatter():
             "required": {
                 "string1": ("STRING", {"default": "", "forceInput": True, "tooltip": "First string to append."}),
                 "string2": ("STRING", {"default": "", "forceInput": True, "tooltip": "Second string to append."}),
+                "comma": ("BOOLEAN", {"default": True, "tooltip": "Add comma between strings."}),
             }
         }
 
@@ -96,8 +97,5 @@ class TextAppendFormatter():
     CATEGORY = "prompt_formatter"
     DESCRIPTION = "Appends two strings together cleanly, removing unnecessary commas, spaces, or other artifacts."
 
-    def combine(self, string1, string2):
-        def clean_split(s):
-            return [part.strip() for part in s.split(",") if part.strip()]
-        combined = ", ".join(clean_split(string1) + clean_split(string2))
-        return (combined,)
+    def combine(self, string1, string2, comma):
+        return f"{string1.rstrip(' ,')}{', ' if comma else ' '}{string2.lstrip(' ,')}"
