@@ -98,4 +98,5 @@ class TextAppendFormatter():
     DESCRIPTION = "Appends two strings together cleanly, removing unnecessary commas, spaces, or other artifacts."
 
     def combine(self, string1, string2, comma):
-        return f"{string1.rstrip(' ,')}{', ' if comma else ' '}{string2.lstrip(' ,')}"
+        combined = f"{string1.rstrip(' ,')}{', ' if comma else ' '}{string2.lstrip(' ,')}"
+        return (combined,)
