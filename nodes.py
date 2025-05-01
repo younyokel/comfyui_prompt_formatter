@@ -81,14 +81,15 @@ class TextOnlyFormatter:
     def passthrough(self, text):
         return (text,)
 
-class TextAppendFormatter():
+class TextAppendFormatter:
     @classmethod
     def INPUT_TYPES(s):
         return {
             "required": {
-                "string1": ("STRING", {"default": "", "forceInput": True, "tooltip": "First string to append."}),
-                "string2": ("STRING", {"default": "", "forceInput": True, "tooltip": "Second string to append."}),
+                "string1": ("STRING", {"default": "", "forceInput": True, "tooltip": "First string."}),
+                "string2": ("STRING", {"default": "", "forceInput": True, "tooltip": "String to append."}),
                 "comma": ("BOOLEAN", {"default": True, "tooltip": "Add comma between strings."}),
+                "dedupe": ("BOOLEAN", {"default": True, "tooltip": "Prevents appending tokens from string2 if they already exist in string1."}),
             }
         }
 
@@ -97,6 +98,32 @@ class TextAppendFormatter():
     CATEGORY = "prompt_formatter"
     DESCRIPTION = "Appends two strings together cleanly, removing unnecessary commas, spaces, or other artifacts."
 
-    def combine(self, string1, string2, comma):
-        combined = f"{string1.rstrip(' ,')}{', ' if comma else ' '}{string2.lstrip(' ,')}"
+    def combine(self, string1, string2, comma, dedupe):
+        appendstr = string2
+
+        # Dedupe string2 tokens
+        if dedupe and string1 and string2:
+            set1 = {token.strip() for token in string1.split(',') if token.strip()}
+            set2 = string2.split(',')
+            filtered_tokens = []
+            for token in set2:
+                if token.strip() not in set1:
+                    filtered_tokens.append(token)
+
+            appendstr = ",".join(filtered_tokens)
+
+        if not appendstr.strip(' ,'):
+            return (string1,)
+
+        s1_rstrip = string1.rstrip(' ,')
+        s2_lstrip = appendstr.lstrip(' ,')
+
+        # Empty string handling
+        if not s1_rstrip:
+             return (s2_lstrip,)
+        if not s2_lstrip:
+             return (string1,)
+
+        combined = f"{s1_rstrip}{', ' if comma else ' '}{s2_lstrip}"
+
         return (combined,)
