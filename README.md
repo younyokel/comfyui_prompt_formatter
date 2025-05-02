@@ -12,18 +12,35 @@ This project is a direct equivalent of [sd_extension-prompt_formatter](https://g
 
 ## Features
 
-### 💫 Format Prompt
-A "magic button" that optimizes your prompt by:
-- Removing mismatched brackets.
-- Aligning commas, brackets, and alternating patterns.
-- Applying weights to bracketed text.
-- Removing duplicate tokens.
+### Prompt Formatter Nodes:
 
-### ✒️ Convert Tags
-This feature converts **Danbooru-style tags** (e.g., `tag_name`) into a traditional **comma-separated format** (e.g., `tag name,`).
+- *CLIP Text Encode (Prompt Formatter)*: Equivalent to ComfyUI's `CLIP Text Encode`.
+- *Prompt Formatter (Only Text)*: Same as above, but returns `STRING` instead of `CONDITIONING`.
 
-### ⏪ Undo Last Change
-Revert the last formatting or conversion action with a single click.
+These nodes feature the following buttons:
+
+#### 💫 Format Prompt
+A "magic button" that optimizes the text in the input field:
+- Removes mismatched brackets (`()`, `[]`).
+- Aligns commas, brackets, and spacing for better consistency.
+- Applies weights to bracketed text (e.g., `((word))` might become `(word:1.21)` if `BRACKET2WEIGHT` is enabled in `config.json`).
+- Removes duplicate tags within the prompt.
+
+#### ✒️ Convert Tags
+Converts **Danbooru-style tags** (e.g., `tag_name` with underscores) into a standard **comma-separated format** (e.g., `tag name,`), considering the `CONV_SPACE_UNDERSCORE` setting in `config.json` and filtering based on `blacklisted_tags.txt`.
+
+#### ⏪ Undo Last Change
+Reverts the *last action* (either Format Prompt or Convert Tags) performed using the buttons on that specific node instance.
+
+---
+
+### Append String Node:
+
+This node appends a second string (`string2`) to a first string (`string1`), with following options:
+- `comma`: Add a comma and space between the combined strings.
+- `dedupe`: Prevent adding tags from `string2` if they already exist in `string1`.
+
+---
 
 ## Configuration Options
 

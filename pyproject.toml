@@ -1,7 +1,7 @@
 [project]
 name = "prompt_formatter"
 description = "This is a custom node for ComfyUI that provides tools to clean, optimize, and format text prompts. Includes features like converting tags, aligning brackets, and applying weights to prompts."
-version = "1.0.2"
+version = "1.0.3"
 license = {file = "LICENSE"}
 
 [project.urls]
