@@ -1,7 +1,7 @@
 import re
 import unicodedata
 
-from .config import BRACKET2WEIGHT, CONV_SPACE_UNDERSCORE, BLACKLISTED_TAGS
+from .app_config import BRACKET2WEIGHT, COLLAPSE_LINEBREAKS, CONV_SPACE_UNDERSCORE, BLACKLISTED_TAGS
 
 # Bracket handling
 brackets_opening = set("([{")
@@ -28,7 +28,7 @@ def normalize_characters(data: str):
 
 def remove_whitespace_excessive(prompt: str):
     lines = prompt.split("\n")
-    cleaned_lines = [" ".join(line.split()).strip() for line in lines if line.strip()]
+    cleaned_lines = [" ".join(line.split()).strip() for line in lines if not COLLAPSE_LINEBREAKS or line.strip()]
     return "\n".join(cleaned_lines)
 
 def align_brackets(prompt: str):
@@ -41,8 +41,33 @@ def space_and(prompt: str):
     return re.sub(r"(.*?)\s*(AND)\s*(.*?)", helper, prompt)
 
 def align_commas(prompt: str):
-    split = [s.strip() for s in prompt.split(',') if s.strip()]
-    return ", ".join(split)
+    if COLLAPSE_LINEBREAKS:
+        if "BREAK" in prompt:
+            parts = prompt.split("BREAK")
+            n = len(parts)
+            for i in range(n):
+                if i == 0:
+                    parts[i] = parts[i].rstrip(" ,")
+                elif i == n - 1:
+                    parts[i] = parts[i].lstrip(" ,")
+                else:
+                    parts[i] = parts[i].strip(" ,")
+            prompt = " BREAK ".join(parts).strip()
+            prompt = re.sub(r"([^\n])[\s,]*\n[\s,]*BREAK", lambda m: f"{m.group(1)}\nBREAK", prompt)
+            prompt = re.sub(r"BREAK[\s,]*\n[\s,]*", "BREAK\n", prompt)
+        segments = [seg.strip() for seg in prompt.split(',') if seg.strip()]
+        return ", ".join(segments)
+    lines = prompt.splitlines()
+    cleaned = []
+    for line in lines:
+        has_trailing = line.rstrip().endswith(',')
+        tokens = [t.strip() for t in line.split(',')]
+        tokens = [t for t in tokens if t]
+        line_clean = ', '.join(tokens)
+        if has_trailing and line_clean:
+            line_clean += ','
+        cleaned.append(line_clean)
+    return '\n'.join(cleaned)
 
 def remove_mismatched_brackets(prompt: str):
     stack = []
